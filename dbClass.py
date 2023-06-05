@@ -69,6 +69,8 @@ class dbClass:
                     exit(-1)
 
         print("Success\n")
+    
+    
 
     def loadStudents(self, gn):
         if self.check_conn():
@@ -185,6 +187,8 @@ class dbClass:
 
             # Convert the new datetime back to a string
             end_time = new_datetime.strftime("%Y-%m-%d %H:%M:%S")
+    
+    
 
 #df.columns=['DEVICE MAC','A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'K', 'L', 'M', 'O', 'P', 'Q', 'R', 'T', 'U', 'V', 'W', 'X', "TIME"]
             hashmap = {
@@ -245,5 +249,25 @@ class dbClass:
                 return df
             except Error as  e:
                 print(f"The error '{e}' occurred")
-    
+    def write_df_to_sql(self,df, tables):
+        if self.dbname.check.conn():
+            
+            try:
+        # if connection:
+        #     df = pd.DataFram([weather])
+        #     cursor = self.db.cursor()
+        #     sqlStr = f"INSERT INTO cse191.forecast"
+                columns = df.columns.tolist()
+                cursor = self.dbname.cursor()
+                values = [tuple(row) for row in df.to_numpy()]
+                placeholders = ', '.join(['%s'] * len(columns))
+                query = f"INSERT INTO {tables} VALUES ({placeholders})"
+                cursor.executemany(query,values)
+                
+                self.dbname.commit()
+                
+                return True
+            except Error as e:
+                print(f"The error '{e}' occurred")
+        return False
     
